@@ -6,11 +6,13 @@ const signUpBtn = document.querySelector(".close");
 const closeBtn = document.querySelectorAll(".close");
 const content = document.querySelector(".content");
 const popup = document.querySelector(".popUp");
+const modalBody = document.querySelector(".modal-body");
 
-const confirmation = document.querySelector('#confirmation');
-
+const confirmation = document.querySelector('.confirmation');
+const validated = document.querySelector('#validated');
 
 let errorExist = true;
+let formIsValidated = false;
 
 // Fonctions
 function editNav() {
@@ -32,7 +34,10 @@ closeBtn.forEach((btn) => btn.addEventListener("click", closeForm));
 
 // ouverture du formulaire
 function launchModal() {
-  modalbg.style.display = "block";
+  if (formIsValidated == false) {
+    modalbg.style.display = "block";
+    validated.style.display = "none";
+  }
 }
 
 // fermeture du formulaire
@@ -65,7 +70,6 @@ const radioButtons = document.querySelectorAll('input[type="radio"][name="locati
 const conditionsCheckbox = document.querySelector('#conditions');
 const newsletterCheckbox = document.querySelector('#newsletter');
 
-
 // #2_Implémenter les entrées end ----------------------------------------------
 
 // #3_Validation ou message d'erreur start -------------------------------------
@@ -78,41 +82,50 @@ const errDivEmail = document.querySelector("#error-email");
 const errDivBirth = document.querySelector("#error-birth");
 const errDivQuantity = document.querySelector("#error-quantity");
 const errDivLocation = document.querySelector("#error-location");
-const errDivValid = document.querySelector("#error-valid");
+
+const errDivConditions = document.querySelector("#error-conditions");
 
 // REGEX
 const namesForm = /^([a-zA-Z-ç-é-è-ê\s])+$/;
 const emailForm = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-const dateForm = /^\d{2}[./-]\d{2}[./-]\d{4}$/;
+const dateForm = /^\d{4}[./-]\d{2}[./-]\d{2}$/;
 const nbrForm = /^[0-9]+$/;
 
+// Variables globales d'erreurs
+let errorOnFirst;
+let errorOnLast;
+let errorOnEmail;
+let errorOnBirth;
+let errorOnQuantity;
+let errorOnRadio;
+let errorOnCondition;
 
-
-// Fonction pour checker les entrées
-function check() {
-  let errorOnFirst;
-  let errorOnLast;
-  let errorOnEmail;
-  let errorOnBirth;
-  let errorOnQuantity;
-  let errorOnRadio;
-  let errorOnCondition;
-
-  // si le FirstName n'est pas vide et contient plus de 2 car et match avec le regex
-  if (firstName.value.match(namesForm) && firstName.value !== ' ' && firstName.value !== null && firstName.value.length > 2) {
-    // alors on n'affiche pas l'erreur et on valide le first
-    errorOnFirst = false;
-    // sinon
-  } else {
-    // alors on affiche l'erreur et on ne valide pas le first
-    errDivFirst.innerText = 'Veuillez entrer 2 caractères ou plus pour le champ Prénom.';
-    errDivFirst.style.color = 'red';
-    errDivFirst.style.fontSize = '16px';
-    errorOnFirst = true;
-  };
+// Fonctions CHECK=
+function fisrtNameCheck() {
 
   // Si errorOnFirst est false alors on applique un display 'none' sur errDivFirst sinon on applique 'block'
   errDivFirst.style.display = !errorOnFirst ? 'none' : 'block';
+
+  // si le FirstName n'est pas vide et contient plus de 2 car et match avec le regex
+  if (firstName.value.match(namesForm) && firstName.value !== ' ' && firstName.value !== null && firstName.value.length >= 2) {
+    // alors on n'affiche pas l'erreur et on valide le first
+    errorOnFirst = false;
+  } else {
+    // on affiche l'erreur et on ne valide pas le first
+    errDivFirst.innerText = 'Veuillez entrer 2 caractères ou plus pour le champ Prénom.';
+    errorOnFirst = true;
+  }
+}
+
+
+function lastNameCheck() {
+
+  // alors on affiche l'erreur et on ne valide pas le first
+  errDivLast.innerText = 'Veuillez entrer 2 caractères ou plus pour le champ Nom.';
+  errorOnLast = true;
+
+  // Si errorOnLast est false alors on applique un display 'none' sur errDivLast sinon on applique 'block'
+  errDivLast.style.display = !errorOnLast ? 'none' : 'block';
 
   // si le lasttName n'est pas vide et contient plus de 2 car et match avec le regex
   if (lastName.value.match(namesForm) && lastName.value !== ' ' && lastName.value !== null && lastName.value.length > 2) {
@@ -120,16 +133,16 @@ function check() {
     errDivLast.style.display = 'none';
     errorOnLast = false;
     // sinon
-  } else {
-    // alors on affiche l'erreur et on ne valide pas le first
-    errDivLast.innerText = 'Veuillez entrer 2 caractères ou plus pour le champ Nom.';
-    errDivLast.style.color = 'red';
-    errDivLast.style.fontSize = '16px';
-    errorOnLast = true;
-  };
-  // Si errorOnLast est false alors on applique un display 'none' sur errDivLast sinon on applique 'block'
-  errDivLast.style.display = !errorOnLast ? 'none' : 'block';
+  }
+}
 
+function emailCheck() {
+
+  // on affiche l'erreur et on ne valide pas l'email
+  errDivEmail.innerText = 'Veuillez renseigner une addresse email valide';
+  errorOnEmail = true;
+  // Si errorOnEmail est false alors on applique un display 'none' sur errDivEmail sinon on applique 'block'
+  errDivEmail.style.display = !errorOnEmail ? 'none' : 'block';
 
   // si le email match avec la vérification regex et qu'il n'est pas vide 
   if (email.value.match(emailForm) && email !== ' ') {
@@ -137,31 +150,35 @@ function check() {
     errDivEmail.style.display = 'none';
     errorOnEmail = false;
     // sinon
-  } else {
-    // on affiche l'erreur et on ne valide pas l'email
-    errDivEmail.innerText = 'Veuillez renseigner une addresse email valide';
-    errDivEmail.style.color = 'red';
-    errDivEmail.style.fontSize = '16px';
-    errorOnEmail = true;
-  };
-  // Si errorOnEmail est false alors on applique un display 'none' sur errDivEmail sinon on applique 'block'
-  errDivEmail.style.display = !errorOnEmail ? 'none' : 'block';
+  }
+}
+
+function birthDateCheck() {
+
+  // Si errorOnBirth est false alors on applique un display 'none' sur errDivBirth sinon on applique 'block'
+  errDivBirth.style.display = !errorOnBirth ? 'none' : 'block';
 
   // Si la date de naissance match avec la regex et qu'elle n'est pas vide
   if (birthDate.value.match(dateForm) && birthDate.value !== ' ') {
     // alors on n'affiche pas l'erreur
     errDivBirth.style.display = 'none';
     errorOnBirth = false;
-    // sinon
   } else {
     // on affiche l'erreur
     errDivBirth.innerText = 'Veuillez entrer une date de naissance valide.';
-    errDivBirth.style.color = 'red';
-    errDivBirth.style.fontSize = '16px';
     errorOnBirth = true;
   }
-  // Si errorOnBirth est false alors on applique un display 'none' sur errDivBirth sinon on applique 'block'
-  errDivBirth.style.display = !errorOnBirth ? 'none' : 'block';
+}
+
+
+function qtTournamentCheck() {
+
+  // on affiche l'erreur
+  errDivQuantity.innerText = 'Veuillez entrer un nombre de tournois valide (0 ou plus).';
+
+  errorOnQuantity = true;
+  // Si errorOnQuantity est false alors on applique un display 'none' sur errDivQuantity sinon on applique 'block'
+  errDivQuantity.style.display = !errorOnQuantity ? 'none' : 'block';
 
   // si la quantité tapée match avec la regex et que l'input n'est pas vide et qu'une fois parsée en Int la valeur est supérieur ou égale à 0 (pour qu'elle ne puisse pas être négative)
   if (qtTournament.value.match(nbrForm) && qtTournament.value !== ' ' && parseInt(qtTournament.value) >= 0) {
@@ -169,46 +186,32 @@ function check() {
     errDivQuantity.style.display = 'none';
     errorOnQuantity = false;
     // sinon
-  } else {
-    // on affiche l'erreur
-    errDivQuantity.innerText = 'Veuillez entrer un nombre de tournois valide (0 ou plus).';
-    errDivQuantity.style.color = 'red';
-    errDivQuantity.style.fontSize = '16px';
-    errorOnQuantity = true;
   }
-  // Si errorOnQuantity est false alors on applique un display 'none' sur errDivQuantity sinon on applique 'block'
-  errDivQuantity.style.display = !errorOnQuantity ? 'none' : 'block';
+}
 
-  // fonction pour vérifier si un des boutton radio est checké
-  function checkRadioButtons() {
-    // initialiser un booléen sur false
-    let isChecked = false;
-    // boucler sur un forEach qui vérifie
-    radioButtons.forEach((radio) => {
-      // si le boutton est coché
-      if (radio.checked) {
-        // la variable passe à true
-        isChecked = true;
-      }
-    });
-    return isChecked;
-  }
+// fonction pour vérifier si un des boutton radio est checké
+function checkRadioButtons() {
+  // initialiser un booléen sur false
+  let isChecked = false;
+  // boucler sur un forEach qui vérifie
+  radioButtons.forEach((radio) => {
+    // si le boutton est coché
+    if (radio.checked) {
+      // la variable passe à true
+      isChecked = true;
+    }
+  });
+  return isChecked;
+}
 
-  // Si un des boutons à bien été coché
-  if (checkRadioButtons()) {
-    // alrs on n'affiche pas l'erreur
-    errDivLocation.style.display = 'none';
-    errorOnRadio = false;
-    // sinon 
-  } else {
-    // afficher l'erreur
-    errDivLocation.innerText = 'Veuillez choisir un tournoi.';
-    errDivLocation.style.color = 'red';
-    errDivLocation.style.fontSize = '16px';
-    errorOnRadio = true;
-  }
-  // Si errorOnRadio est false alors on applique un display 'none' sur errDivLocation sinon on applique 'block'
-  errDivLocation.style.display = !errorOnRadio ? 'none' : 'block';
+function conditionCheck() {
+
+  // on affiche l'erreur
+  errDivConditions.innerText = 'Veuillez accepter les conditions d\'utilisation.';
+  errorOnCondition = true;
+
+  // Si errorOnCondition est false alors on applique un display 'none' sur errDivConditions sinon on applique 'block'
+  errDivConditions.style.display = !errorOnCondition ? 'none' : 'block';
 
   //si le checkbox des condition est coché
   if (conditionsCheckbox.checked) {
@@ -216,28 +219,19 @@ function check() {
     errDivConditions.style.display = 'none';
     errorOnCondition = false;
     // sinon
-  } else {
-    // on affiche l'erreur
-    errDivConditions.innerText = 'Veuillez accepter les conditions d\'utilisation.';
-    errDivConditions.style.color = 'red';
-    errDivConditions.style.fontSize = '16px';
-    errorOnCondition = true;
   }
-  // Si errorOnCondition est false alors on applique un display 'none' sur errDivConditions sinon on applique 'block'
-  errDivConditions.style.display = !errorOnCondition ? 'none' : 'block';
+}
 
-  //
+function checkboxCheck() {
   if (newsletterCheckbox.checked) {
     // Ici, vous pouvez ajouter des actions à effectuer si la case est cochée
     // back end => Envoyer le mail dans la mail list 
-  } else {
-    // ne rien faire (cette partie n'est pas obligatoire)
+    console.log("Inscrit à la newsletter");
   }
-
-
-
 }
 
+
+// --------------------- validation ---------------------
 // Fonction pour valider les entrées
 function validation() {
   // S'il n'y a aucune erreur alors
@@ -245,19 +239,31 @@ function validation() {
     // ne plus afficher le formulaire et remettre l'affichage en flex
     form.style.display = "none";
     confirmation.style.display = "block";
+    validated.style.display = "block";
+    modalBody.style.display = "none";
+    formIsValidated = true;
   }
 }
 
-// Fonction pour afficher une erreur
-function error() {
+// Fonction pour checker les entrées
+function check() {
+  fisrtNameCheck();
+  lastNameCheck();
+  emailCheck();
+  birthDateCheck();
+  qtTournamentCheck();
+  errorOnRadio = !checkRadioButtons(); // Modifier cette ligne
+  conditionCheck();
+  checkboxCheck();
 
+  validation();
 }
+
 // #3_Validation ou message d'erreur end ---------------------------------------
 
 // 4#_Ajout confirmation quand envoi réussi start ------------------------------
 form.addEventListener('submit', function (event) {
   event.preventDefault(); // Empêche la soumission par défaut du formulaire
   check(); // Vérifie les entrées du formulaire
-  validation(); // Affiche le message de confirmation si la soumission est réussie
 });
 // 4#_Ajout confirmation quand envoi réussi end ---------------------------------
