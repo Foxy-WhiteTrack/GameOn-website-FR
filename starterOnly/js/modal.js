@@ -11,6 +11,8 @@ const modalBody = document.querySelector(".modal-body");
 const confirmation = document.querySelector('.confirmation');
 const validated = document.querySelector('#validated');
 
+const minAge = 16;
+
 let errorExist = true;
 let formIsValidated = false;
 
@@ -24,6 +26,15 @@ function editNav() {
   }
 }
 
+//tableau des erreurs
+dataError = {
+  empty: "Merci de remplir ce champ",
+  name: `Vous devez entrer un prénom valide de minimum 2 caractères`,
+  mail: "le format d'email n\'est pas valide",
+  birthday: `Vous devez avoir ${minAge} ans minimum pour participer`,
+  condition: "Vous devez accepter les conditions générales"
+}
+
 // #1_Fermer la modal start --------------------------------------------------
 
 // Event ouvrir la modal
@@ -34,7 +45,9 @@ closeBtn.forEach((btn) => btn.addEventListener("click", closeForm));
 
 // ouverture du formulaire
 function launchModal() {
+  reset();
   if (formIsValidated == false) {
+    form.style.display = "block";
     modalbg.style.display = "block";
     validated.style.display = "none";
   }
@@ -60,12 +73,7 @@ const date = /^\d{2}[./-]\d{2}[./-]\d{4}$/;
 const nbr = /^[0-9]+$/;
 
 // Variables locations formulaire
-const location1 = document.querySelector("#location1");
-const location2 = document.querySelector("#location2");
-const location3 = document.querySelector("#location3");
-const location4 = document.querySelector("#location4");
-const location5 = document.querySelector("#location5");
-const location6 = document.querySelector("#location6");
+const locations = document.getElementsByName('location');
 const radioButtons = document.querySelectorAll('input[type="radio"][name="location"]');
 const conditionsCheckbox = document.querySelector('#conditions');
 const newsletterCheckbox = document.querySelector('#newsletter');
@@ -101,82 +109,88 @@ let errorOnRadio;
 let errorOnCondition;
 
 // Fonctions CHECK=
-function fisrtNameCheck() {
+function firstNameCheck() {
+  const trimmedFirstName = firstName.value.trim();
+  const errorKey = firstName.dataset.errorKey;
 
-  // Si errorOnFirst est false alors on applique un display 'none' sur errDivFirst sinon on applique 'block'
-  errDivFirst.style.display = !errorOnFirst ? 'none' : 'block';
-
-  // si le FirstName n'est pas vide et contient plus de 2 car et match avec le regex
-  if (firstName.value.match(namesForm) && firstName.value !== ' ' && firstName.value !== null && firstName.value.length >= 2) {
-    // alors on n'affiche pas l'erreur et on valide le first
-    errorOnFirst = false;
-  } else {
-    // on affiche l'erreur et on ne valide pas le first
-    errDivFirst.innerText = 'Veuillez entrer 2 caractères ou plus pour le champ Prénom.';
+  // Si le prénom contient uniquement des espaces, affichez l'erreur et définissez errorOnFirst sur true
+  if (trimmedFirstName === "") {
     errorOnFirst = true;
+    errDivFirst.innerHTML = dataError.empty;
+  } else if (trimmedFirstName.match(namesForm) && trimmedFirstName.length >= 2) {
+    errorOnFirst = false;
+    errDivFirst.style.display = 'none';
+  } else {
+    errorOnFirst = true;
+    errDivFirst.innerHTML = dataError[errorKey];
   }
+  errDivFirst.style.display = errorOnFirst ? 'block' : 'none';
 }
 
 
 function lastNameCheck() {
+  const trimmedLastName = lastName.value.trim();
 
-  // alors on affiche l'erreur et on ne valide pas le first
-  errDivLast.innerText = 'Veuillez entrer 2 caractères ou plus pour le champ Nom.';
-  errorOnLast = true;
-
-  // Si errorOnLast est false alors on applique un display 'none' sur errDivLast sinon on applique 'block'
-  errDivLast.style.display = !errorOnLast ? 'none' : 'block';
-
-  // si le lasttName n'est pas vide et contient plus de 2 car et match avec le regex
-  if (lastName.value.match(namesForm) && lastName.value !== ' ' && lastName.value !== null && lastName.value.length > 2) {
-    // alors on n'affiche pas l'erreur et on valide le last
-    errDivLast.style.display = 'none';
+  // Si le nom contient uniquement des espaces, affichez l'erreur et définissez errorOnLast sur true
+  if (trimmedLastName === "") {
+    errorOnLast = true;
+    errDivLast.innerHTML = dataError.empty;
+  } else if (trimmedLastName.match(namesForm) && trimmedLastName.length >= 2) {
     errorOnLast = false;
-    // sinon
+    errDivLast.style.display = 'none';
+  } else {
+    errorOnLast = true;
+    errDivLast.innerHTML = dataError.name;
   }
+  errDivLast.style.display = errorOnLast ? 'block' : 'none';
 }
 
 function emailCheck() {
+  const trimmedEmail = email.value.trim();
 
-  // on affiche l'erreur et on ne valide pas l'email
-  errDivEmail.innerText = 'Veuillez renseigner une addresse email valide';
-  errorOnEmail = true;
-  // Si errorOnEmail est false alors on applique un display 'none' sur errDivEmail sinon on applique 'block'
-  errDivEmail.style.display = !errorOnEmail ? 'none' : 'block';
-
-  // si le email match avec la vérification regex et qu'il n'est pas vide 
-  if (email.value.match(emailForm) && email !== ' ') {
-    // alors on n'affiche pas l'erreur et on valide le mail
-    errDivEmail.style.display = 'none';
+  // Si l'email contient uniquement des espaces, affichez l'erreur et définissez errorOnEmail sur true
+  if (trimmedEmail === "") {
+    errorOnEmail = true;
+    errDivEmail.innerHTML = dataError.empty;
+  } else if (trimmedEmail.match(emailForm)) {
     errorOnEmail = false;
-    // sinon
+    errDivEmail.style.display = 'none';
+  } else {
+    errorOnEmail = true;
+    errDivEmail.innerHTML = dataError.mail;
   }
+  errDivEmail.style.display = errorOnEmail ? 'block' : 'none';
 }
 
 function birthDateCheck() {
-
   // Si errorOnBirth est false alors on applique un display 'none' sur errDivBirth sinon on applique 'block'
   errDivBirth.style.display = !errorOnBirth ? 'none' : 'block';
 
   // Si la date de naissance match avec la regex et qu'elle n'est pas vide
   if (birthDate.value.match(dateForm) && birthDate.value !== ' ') {
-    // alors on n'affiche pas l'erreur
-    errDivBirth.style.display = 'none';
-    errorOnBirth = false;
+    const birthDateValue = new Date(birthDate.value);
+    const currentDate = new Date();
+    const ageDifference = currentDate - birthDateValue;
+    const age = ageDifference / (1000 * 60 * 60 * 24 * 365.25);
+
+    if (age >= 16) {
+      errorOnBirth = false;
+    } else {
+      // on affiche l'erreur si l'utilisateur a moins de 16 ans
+      errorOnBirth = true;
+      errDivBirth.innerHTML = dataError.birthday;
+    }
   } else {
     // on affiche l'erreur
-    errDivBirth.innerText = 'Veuillez entrer une date de naissance valide.';
     errorOnBirth = true;
+    errDivBirth.innerHTML = dataError.empty;
   }
 }
 
 
+
 function qtTournamentCheck() {
-
-  // on affiche l'erreur
-  errDivQuantity.innerText = 'Veuillez entrer un nombre de tournois valide (0 ou plus).';
-
-  errorOnQuantity = true;
+  errorOnQuantity = false;
   // Si errorOnQuantity est false alors on applique un display 'none' sur errDivQuantity sinon on applique 'block'
   errDivQuantity.style.display = !errorOnQuantity ? 'none' : 'block';
 
@@ -186,28 +200,37 @@ function qtTournamentCheck() {
     errDivQuantity.style.display = 'none';
     errorOnQuantity = false;
     // sinon
+  } else {
+    // on affiche l'erreur
+    errorOnQuantity = true;
+    errDivQuantity.innerHTML = dataError.empty;
+    errDivQuantity.style.display = 'block';
   }
 }
 
 // fonction pour vérifier si un des boutton radio est checké
-function checkRadioButtons() {
-  // initialiser un booléen sur false
-  let isChecked = false;
-  // boucler sur un forEach qui vérifie
-  radioButtons.forEach((radio) => {
-    // si le boutton est coché
-    if (radio.checked) {
-      // la variable passe à true
-      isChecked = true;
+function locationCheck() {
+  errorOnLocation = true;
+  for (let i = 0; i < locations.length; i++) {
+    if (locations[i].checked) {
+      errorOnLocation = false;
+      break;
     }
-  });
-  return isChecked;
+  }
+  if (errorOnLocation) {
+    errDivLocation.innerHTML = "Veuillez choisir un tournoi.";
+  } else {
+    errDivLocation.style.display = 'none';
+  }
+  errDivLocation.style.display = errorOnLocation ? 'block' : 'none';
+
+  // Mettre à jour errorOnRadio avec la valeur de errorOnLocation
+  errorOnRadio = errorOnLocation;
 }
 
 function conditionCheck() {
 
   // on affiche l'erreur
-  errDivConditions.innerText = 'Veuillez accepter les conditions d\'utilisation.';
   errorOnCondition = true;
 
   // Si errorOnCondition est false alors on applique un display 'none' sur errDivConditions sinon on applique 'block'
@@ -235,24 +258,28 @@ function checkboxCheck() {
 // Fonction pour valider les entrées
 function validation() {
   // S'il n'y a aucune erreur alors
-  if (errorOnFirst == false && errorOnLast == false && errorOnEmail == false && errorOnBirth == false && errorOnQuantity == false && errorOnRadio == false && errorOnCondition == false) {
+  if (errorOnFirst == false && errorOnLast == false && errorOnEmail == false && errorOnBirth == false && errorOnQuantity == false && errorOnRadio == false && errorOnCondition == false && errorOnLocation == false) {
     // ne plus afficher le formulaire et remettre l'affichage en flex
     form.style.display = "none";
     confirmation.style.display = "block";
     validated.style.display = "block";
-    modalBody.style.display = "none";
-    formIsValidated = true;
+
   }
+}
+
+// reset le formulaire
+function reset() {
+  document.querySelector("#form").reset();
 }
 
 // Fonction pour checker les entrées
 function check() {
-  fisrtNameCheck();
+  firstNameCheck();
   lastNameCheck();
   emailCheck();
   birthDateCheck();
   qtTournamentCheck();
-  errorOnRadio = !checkRadioButtons(); // Modifier cette ligne
+  locationCheck()
   conditionCheck();
   checkboxCheck();
 

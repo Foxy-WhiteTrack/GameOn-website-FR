@@ -88,7 +88,9 @@ const errDivConditions = document.querySelector("#error-conditions");
 // REGEX
 const namesForm = /^([a-zA-Z-ç-é-è-ê\s])+$/;
 const emailForm = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+
 const dateForm = /^\d{4}[./-]\d{2}[./-]\d{2}$/;
+
 const nbrForm = /^[0-9]+$/;
 
 // Variables globales d'erreurs
@@ -232,9 +234,12 @@ function validation() {
         form.style.display = "none";
         confirmation.style.display = "block";
         validated.style.display = "block";
-        modalBody.style.display = "none";
-        formIsValidated = true;
+        reset();
     }
+}
+// réinitialiser le forulaire
+function reset() {
+    document.querySelector("#form").reset();
 }
 
 // Fonction pour checker les entrées
