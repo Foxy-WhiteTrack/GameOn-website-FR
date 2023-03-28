@@ -106,6 +106,7 @@ let errorOnEmail;
 let errorOnBirth;
 let errorOnQuantity;
 let errorOnRadio;
+let errorOnLocation;
 let errorOnCondition;
 
 // Fonctions CHECK=
@@ -126,7 +127,6 @@ function firstNameCheck() {
   }
   errDivFirst.style.display = errorOnFirst ? 'block' : 'none';
 }
-
 
 function lastNameCheck() {
   const trimmedLastName = lastName.value.trim();
@@ -163,11 +163,13 @@ function emailCheck() {
 }
 
 function birthDateCheck() {
-  // Si errorOnBirth est false alors on applique un display 'none' sur errDivBirth sinon on applique 'block'
-  errDivBirth.style.display = !errorOnBirth ? 'none' : 'block';
-
+  // Si la date de naissance est vide
+  if (birthDate.value.trim() === '') {
+    errorOnBirth = true;
+    errDivBirth.innerHTML = dataError.empty;
+  }
   // Si la date de naissance match avec la regex et qu'elle n'est pas vide
-  if (birthDate.value.match(dateForm) && birthDate.value !== ' ') {
+  else if (birthDate.value.match(dateForm)) {
     const birthDateValue = new Date(birthDate.value);
     const currentDate = new Date();
     const ageDifference = currentDate - birthDateValue;
@@ -185,9 +187,9 @@ function birthDateCheck() {
     errorOnBirth = true;
     errDivBirth.innerHTML = dataError.empty;
   }
+  // Si errorOnBirth est false alors on applique un display 'none' sur errDivBirth sinon on applique 'block'
+  errDivBirth.style.display = !errorOnBirth ? 'none' : 'block';
 }
-
-
 
 function qtTournamentCheck() {
   errorOnQuantity = false;
@@ -253,7 +255,6 @@ function checkboxCheck() {
   }
 }
 
-
 // --------------------- validation ---------------------
 // Fonction pour valider les entrées
 function validation() {
@@ -263,7 +264,6 @@ function validation() {
     form.style.display = "none";
     confirmation.style.display = "block";
     validated.style.display = "block";
-
   }
 }
 
