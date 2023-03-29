@@ -1,13 +1,12 @@
 // DOM
 const modalbg = document.querySelector(".bground");
 const modalBtn = document.querySelectorAll(".modal-btn");
-const formData = document.querySelectorAll(".formData");
 const closeBtn = document.querySelectorAll(".close");
-const closed = document.querySelector('#closed');
-const valid = document.querySelector('#valid');
+const inscript = document.querySelector("#btn-inscript");
 const content = document.querySelector(".content");
-const popup = document.querySelector(".popUp");
-const modalBody = document.querySelector(".modal-body");
+
+// boutons fermeture
+const closed = document.querySelector("#closed");
 
 const confirmation = document.querySelector('.confirmation');
 const validated = document.querySelector('#validated');
@@ -15,7 +14,6 @@ const validated = document.querySelector('#validated');
 const minAge = 16;
 const maxAge = 70;
 
-let errorExist = true;
 let formIsValidated = false;
 
 // Fonctions
@@ -30,11 +28,14 @@ function editNav() {
 
 //tableau des erreurs
 dataError = {
-  empty: "Merci de remplir ce champ",
-  name: `Vous devez entrer un prénom valide de minimum 2 caractères`,
-  mail: "le format d'email n\'est pas valide",
+  empty: 'Merci de remplir ce champ',
+  name: 'Vous devez entrer un prénom valide de minimum 2 caractères',
+  last: 'Vous devez entrer un nom valide de minimum 2 caractères',
+  mail: 'le format d\'email n\'est pas valide',
+  quantity: 'cette valeur doit être supérieur ou égale à 1',
   birthday: `Vous devez avoir ${minAge} ans minimum et ${maxAge} maximum pour participer`,
-  condition: "Vous devez accepter les conditions générales"
+  errorbirthday: 'format de date de naissance invalide',
+  condition: 'Vous devez accepter les conditions générales'
 }
 
 // #1_Fermer la modal start --------------------------------------------------
@@ -45,7 +46,7 @@ modalBtn.forEach((btn) => btn.addEventListener("click", launchModal));
 // Event fermer la modal
 closeBtn.forEach((btn) => btn.addEventListener("click", closeForm));
 
-closed.addEventListener("click", closeForm);
+closed.addEventListener("click", closeThx);
 
 // ouverture du formulaire
 function launchModal() {
@@ -54,11 +55,17 @@ function launchModal() {
     form.style.display = "block";
     modalbg.style.display = "block";
     validated.style.display = "none";
+    content.style.display = "block";
   }
 }
 
 // fermeture du formulaire
 function closeForm() {
+  modalbg.style.display = "none";
+}
+function closeThx() {
+  validated.style.display = "none";
+  content.style.display = "none";
   modalbg.style.display = "none";
 }
 // #1_Fermer la modal end -----------------------------------------------------
@@ -118,6 +125,8 @@ function firstNameCheck() {
   const trimmedFirstName = firstName.value.trim();
   const errorKey = firstName.dataset.errorKey;
 
+  // let errorMess = "";
+
   // Si le prénom contient uniquement des espaces, affichez l'erreur et définissez errorOnFirst sur true
   if (trimmedFirstName === "") {
     errorOnFirst = true;
@@ -130,6 +139,10 @@ function firstNameCheck() {
     errDivFirst.innerHTML = dataError[errorKey];
   }
   errDivFirst.style.display = errorOnFirst ? 'block' : 'none';
+  // if (trimmedFirstName.length < 2) {
+  //   errorMess = dataError.name;
+  // }
+  // errDivFirst.innerHTML = errorMess;
 }
 
 function lastNameCheck() {
@@ -144,7 +157,7 @@ function lastNameCheck() {
     errDivLast.style.display = 'none';
   } else {
     errorOnLast = true;
-    errDivLast.innerHTML = dataError.name;
+    errDivLast.innerHTML = dataError.last;
   }
   errDivLast.style.display = errorOnLast ? 'block' : 'none';
 }
@@ -176,18 +189,14 @@ function birthDateCheck() {
 
     if (age >= minAge && age <= maxAge) {
       errorOnBirth = false;
-      birthDate.setCustomValidity("");
-      console.log(age);
     } else {
       // on affiche l'erreur si l'utilisateur a moins de 16 ans ou plus de 70 ans
       errorOnBirth = true;
-      birthDate.setCustomValidity("L'utilisateur doit avoir entre 16 et 70 ans.");
-      console.log(age);
+      errDivBirth.innerHTML = dataError.birthday;
     }
   } else {
     errorOnBirth = true;
-    birthDate.setCustomValidity("Date de naissance invalide.");
-    console.log(age);
+    errDivBirth.innerHTML = dataError.errorbirthday;
   }
   // Si errorOnBirth est false alors on applique un display 'none' sur errDivBirth sinon on applique 'block'
   errDivBirth.style.display = !errorOnBirth ? 'none' : 'block';
@@ -208,7 +217,7 @@ function qtTournamentCheck() {
   } else {
     // on affiche l'erreur
     errorOnQuantity = true;
-    errDivQuantity.innerHTML = dataError.empty;
+    errDivQuantity.innerHTML = dataError.quantity;
     errDivQuantity.style.display = 'block';
   }
 }

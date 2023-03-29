@@ -1,0 +1,6 @@
+- birthdate à faire 
+- renommer les livrables
+rebosser les data-error
+rebosser les regex
+
+préciser le process de réalisation (la logique de mon code JS)
