@@ -1,0 +1,3 @@
+- afficher les erreurs grace à data-error
+- Mode Mobile et tablette OP
+- Identique à la maquette
