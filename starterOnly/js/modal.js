@@ -2,8 +2,9 @@
 const modalbg = document.querySelector(".bground");
 const modalBtn = document.querySelectorAll(".modal-btn");
 const formData = document.querySelectorAll(".formData");
-const signUpBtn = document.querySelector(".close");
 const closeBtn = document.querySelectorAll(".close");
+const closed = document.querySelector('#closed');
+const valid = document.querySelector('#valid');
 const content = document.querySelector(".content");
 const popup = document.querySelector(".popUp");
 const modalBody = document.querySelector(".modal-body");
@@ -43,6 +44,8 @@ modalBtn.forEach((btn) => btn.addEventListener("click", launchModal));
 
 // Event fermer la modal
 closeBtn.forEach((btn) => btn.addEventListener("click", closeForm));
+
+closed.addEventListener("click", closeForm);
 
 // ouverture du formulaire
 function launchModal() {
@@ -174,14 +177,17 @@ function birthDateCheck() {
     if (age >= minAge && age <= maxAge) {
       errorOnBirth = false;
       birthDate.setCustomValidity("");
+      console.log(age);
     } else {
       // on affiche l'erreur si l'utilisateur a moins de 16 ans ou plus de 70 ans
       errorOnBirth = true;
       birthDate.setCustomValidity("L'utilisateur doit avoir entre 16 et 70 ans.");
+      console.log(age);
     }
   } else {
     errorOnBirth = true;
     birthDate.setCustomValidity("Date de naissance invalide.");
+    console.log(age);
   }
   // Si errorOnBirth est false alors on applique un display 'none' sur errDivBirth sinon on applique 'block'
   errDivBirth.style.display = !errorOnBirth ? 'none' : 'block';
@@ -257,7 +263,7 @@ function validation() {
     // ne plus afficher le formulaire et remettre l'affichage en flex
     form.style.display = "none";
     confirmation.style.display = "block";
-    validated.style.display = "block";
+    validated.style.display = "flex";
   }
 }
 

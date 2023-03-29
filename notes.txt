@@ -1,1 +1,0 @@
-- panel de validation à faire à la même taille que le panel principal
