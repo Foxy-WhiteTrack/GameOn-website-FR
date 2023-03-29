@@ -1,3 +1,1 @@
-- afficher les erreurs grace à data-error
-- Mode Mobile et tablette OP
-- Identique à la maquette
+- panel de validation à faire à la même taille que le panel principal

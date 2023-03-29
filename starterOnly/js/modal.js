@@ -12,6 +12,7 @@ const confirmation = document.querySelector('.confirmation');
 const validated = document.querySelector('#validated');
 
 const minAge = 16;
+const maxAge = 70;
 
 let errorExist = true;
 let formIsValidated = false;
@@ -31,7 +32,7 @@ dataError = {
   empty: "Merci de remplir ce champ",
   name: `Vous devez entrer un prénom valide de minimum 2 caractères`,
   mail: "le format d'email n\'est pas valide",
-  birthday: `Vous devez avoir ${minAge} ans minimum pour participer`,
+  birthday: `Vous devez avoir ${minAge} ans minimum et ${maxAge} maximum pour participer`,
   condition: "Vous devez accepter les conditions générales"
 }
 
@@ -163,33 +164,29 @@ function emailCheck() {
 }
 
 function birthDateCheck() {
-  // Si la date de naissance est vide
-  if (birthDate.value.trim() === '') {
-    errorOnBirth = true;
-    errDivBirth.innerHTML = dataError.empty;
-  }
   // Si la date de naissance match avec la regex et qu'elle n'est pas vide
-  else if (birthDate.value.match(dateForm)) {
+  if (birthDate.value.match(dateForm) && birthDate.value.trim() !== '') {
     const birthDateValue = new Date(birthDate.value);
     const currentDate = new Date();
     const ageDifference = currentDate - birthDateValue;
     const age = ageDifference / (1000 * 60 * 60 * 24 * 365.25);
 
-    if (age >= 16) {
+    if (age >= minAge && age <= maxAge) {
       errorOnBirth = false;
+      birthDate.setCustomValidity("");
     } else {
-      // on affiche l'erreur si l'utilisateur a moins de 16 ans
+      // on affiche l'erreur si l'utilisateur a moins de 16 ans ou plus de 70 ans
       errorOnBirth = true;
-      errDivBirth.innerHTML = dataError.birthday;
+      birthDate.setCustomValidity("L'utilisateur doit avoir entre 16 et 70 ans.");
     }
   } else {
-    // on affiche l'erreur
     errorOnBirth = true;
-    errDivBirth.innerHTML = dataError.empty;
+    birthDate.setCustomValidity("Date de naissance invalide.");
   }
   // Si errorOnBirth est false alors on applique un display 'none' sur errDivBirth sinon on applique 'block'
   errDivBirth.style.display = !errorOnBirth ? 'none' : 'block';
 }
+
 
 function qtTournamentCheck() {
   errorOnQuantity = false;
@@ -231,21 +228,18 @@ function locationCheck() {
 }
 
 function conditionCheck() {
-
-  // on affiche l'erreur
-  errorOnCondition = true;
-
-  // Si errorOnCondition est false alors on applique un display 'none' sur errDivConditions sinon on applique 'block'
-  errDivConditions.style.display = !errorOnCondition ? 'none' : 'block';
-
-  //si le checkbox des condition est coché
+  // Si la case "conditions" est cochée
   if (conditionsCheckbox.checked) {
-    // alors on n'affiche pas l'erreur
-    errDivConditions.style.display = 'none';
     errorOnCondition = false;
-    // sinon
+    errDivConditions.style.display = 'none';
+  } else {
+    // Sinon, affichez l'erreur et définissez errorOnCondition sur true
+    errorOnCondition = true;
+    errDivConditions.innerHTML = dataError.condition;
+    errDivConditions.style.display = 'block';
   }
 }
+
 
 function checkboxCheck() {
   if (newsletterCheckbox.checked) {
