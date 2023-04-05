@@ -1,4 +1,3 @@
-
 const modalbg = document.querySelector(".bground");
 const modalBtn = document.querySelectorAll(".modal-btn");
 const closeBtn = document.querySelectorAll(".close");
@@ -30,13 +29,14 @@ function editNav() {
 //tableau des erreurs dédiée
 dataError = {
   empty: 'Merci de remplir ce champ',
-  name: 'Vous devez entrer un prénom valide de minimum 2 caractères',
-  last: 'Vous devez entrer un nom valide de minimum 2 caractères',
+  name: 'Veuillez entrer 2 caractères ou plus pour le champ du prénom',
+  last: 'Veuillez entrer 2 caractères ou plus pour le champ du nom',
   mail: 'le format d\'email n\'est pas valide',
-  quantity: 'cette valeur doit être supérieur ou égale à 1',
+  quantity: 'cette valeur doit être supérieur ou égale à 0',
   birthday: `Vous devez avoir ${minAge} ans minimum et ${maxAge} maximum pour participer`,
-  errorbirthday: 'format de date de naissance invalide',
-  condition: 'Vous devez accepter les conditions générales'
+  errorbirthday: 'Vous devez entrer votre date de naissance.',
+  location: 'Vous devez choisir une option.',
+  condition: 'Vous devez vérifier que vous acceptez les termes et conditions.'
 }
 
 // ouvrir le panel au clic du bouton ouverture du formulaire (je m'inscris)
@@ -70,6 +70,7 @@ function closeThx() {
   validated.style.display = "none";
   content.style.display = "none";
   modalbg.style.display = "none";
+  reset();
 }
 
 // Variables éléments formulaire
@@ -240,7 +241,7 @@ function locationCheck() {
   }
   // Si l'erreur est sur true afficher l'erreur sinon ne pas l'afficher
   if (errorOnLocation) {
-    errDivLocation.innerHTML = "Veuillez choisir un tournoi.";
+    errDivLocation.innerHTML = dataError.location;
   } else {
     errDivLocation.style.display = 'none';
   }
@@ -265,15 +266,6 @@ function conditionCheck() {
   }
 }
 
-// fonction pour vérifier la newsletter
-function checkboxCheck() {
-  if (newsletterCheckbox.checked) {
-    // Ici, vous pouvez ajouter des actions à effectuer si la case est cochée
-    // back end => Envoyer le mail dans la mail list 
-    console.log("Inscrit à la newsletter");
-  }
-}
-
 // --------------------- validation complète du formulaire ---------------------
 // Fonction pour valider les entrées
 function validation() {
@@ -289,6 +281,14 @@ function validation() {
 // reset le formulaire
 function reset() {
   document.querySelector("#form").reset();
+  errorOnFirst = true;
+  errorOnLast = true;
+  errorOnEmail = true;
+  errorOnBirth = true;
+  errorOnQuantity = true;
+  errorOnRadio = true;
+  errorOnLocation = true;
+  errorOnCondition = true;
 }
 
 // Fonction pour lancer les fonction qui vont checker toutes les entrées
@@ -300,7 +300,6 @@ function check() {
   qtTournamentCheck();
   locationCheck()
   conditionCheck();
-  checkboxCheck();
 
   validation();
 }
