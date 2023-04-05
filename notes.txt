@@ -4,3 +4,13 @@ rebosser les data-error
 rebosser les regex
 
 préciser le process de réalisation (la logique de mon code JS)
+
+quand on appuie sur Je m'inscrit la modale s'ouvre
+
+quand on appuie sur la croix de la modale la modal s'en valeur
+
+quand on appuis sur submit ça check
+
+quand c'est validé on efface la modale et on affoche le remerciement
+
+quand on appuie sur fermer ça quitte l'affichage remerciement
